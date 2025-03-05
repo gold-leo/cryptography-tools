@@ -28,15 +28,20 @@ int RotWord(unsigned int word) {
 }
 
 int SubWord(unsigned int word) {
-  // Split the word into separate bytes (0, 1, 2, 3)
-  // (using automatic concatenation when int -> char)
   char s_box[256] = SUBSTITUTES;
+  // Initialize the result word (all bits 0s)
   int result = 0;
+  // Loop 4 times over each byte, starting with the left-most byte.
   for (int i = 24; i >= 0; i -= 8) {
+    // Isolate the byte and initialize into a char.
     unsigned char byte = word >> i;
+    // Separate the pair (each 4 bits, e.g. 0000, 0000) into SBox coordinates.
     char row = byte >> 4;
     char col = byte & 0x01;
+    // Rewrite the byte as the SBox specifies.
     byte = s_box[(16 * row) + col];
+    // Create a mask for the byte and write the byte into the result.
+    // The mask contains the byte in the proper location (0, 1, 2, 3).
     int mask = ((int) byte) << i;
     result ^= mask;
   }
